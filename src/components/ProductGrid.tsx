@@ -137,7 +137,7 @@ const ProductGrid = ({ selectedCategory, searchQuery }: ProductGridProps) => {
           return shuffled;
         });
         setIsShuffling(false);
-      }, 3000);
+      }, 300);
     }, 80000);
 
     return () => clearInterval(interval);
