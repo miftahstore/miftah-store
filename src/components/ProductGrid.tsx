@@ -87,6 +87,18 @@ const PRODUCTS: Product[] = [
       { color: "Sky Blue", image: earbudsWhite },
     ]
   },
+  {
+    id: 6,
+    name: "Pro Tablet Device",
+    price: "$699.99",
+    image: tabletSilver,
+    category: "Computing",
+    variants: [
+      { color: "Silver", image: tabletSilver },
+      { color: "Space Gray", image: tabletSilver },
+      { color: "Rose Gold", image: tabletSilver },
+    ]
+  },
   
 ];
 
