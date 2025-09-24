@@ -22,6 +22,7 @@ interface Product {
   name: string;
   price: string;
   image: string;
+  category: string;
   variants: ProductVariant[];
 }
 
@@ -31,6 +32,7 @@ const PRODUCTS: Product[] = [
     name: "Premium Wireless Headphones",
     price: "$299.99",
     image: headphonesBlack,
+    category: "Audio",
     variants: [
       { color: "Midnight Black", image: headphonesBlack },
       { color: "Pearl White", image: headphonesWhite },
@@ -42,6 +44,7 @@ const PRODUCTS: Product[] = [
     name: "Professional Laptop",
     price: "$1,299.99",
     image: laptopSilver,
+    category: "Computing",
     variants: [
       { color: "Silver", image: laptopSilver },
       { color: "Space Gray", image: laptopSilver },
@@ -53,6 +56,7 @@ const PRODUCTS: Product[] = [
     name: "Flagship Smartphone",
     price: "$899.99",
     image: smartphoneBlack,
+    category: "Mobile",
     variants: [
       { color: "Obsidian Black", image: smartphoneBlack },
       { color: "Arctic Silver", image: smartphoneBlack },
@@ -64,6 +68,7 @@ const PRODUCTS: Product[] = [
     name: "Smart Fitness Watch",
     price: "$399.99",
     image: smartwatchBlack,
+    category: "Wearables",
     variants: [
       { color: "Black Sport", image: smartwatchBlack },
       { color: "Silver Steel", image: smartwatchBlack },
@@ -75,6 +80,7 @@ const PRODUCTS: Product[] = [
     name: "True Wireless Earbuds",
     price: "$179.99",
     image: earbudsWhite,
+    category: "Audio",
     variants: [
       { color: "Pure White", image: earbudsWhite },
       { color: "Charcoal Black", image: earbudsWhite },
@@ -86,6 +92,7 @@ const PRODUCTS: Product[] = [
     name: "Pro Tablet Device",
     price: "$699.99",
     image: tabletSilver,
+    category: "Computing",
     variants: [
       { color: "Silver", image: tabletSilver },
       { color: "Space Gray", image: tabletSilver },
@@ -94,11 +101,20 @@ const PRODUCTS: Product[] = [
   },
 ];
 
-const ProductGrid = () => {
+interface ProductGridProps {
+  selectedCategory: string;
+}
+
+const ProductGrid = ({ selectedCategory }: ProductGridProps) => {
   const [products, setProducts] = useState(PRODUCTS);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false);
+
+  // Filter products by category
+  const filteredProducts = selectedCategory === "All" 
+    ? products 
+    : products.filter(product => product.category === selectedCategory);
 
   // Shuffle products every 8 seconds
   useEffect(() => {
@@ -141,7 +157,7 @@ const ProductGrid = () => {
         <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 md:gap-6 transition-all duration-500 ${
           isShuffling ? 'opacity-70 scale-98' : 'opacity-100 scale-100'
         }`}>
-          {products.map((product) => (
+          {filteredProducts.map((product) => (
             <div
               key={product.id}
               onClick={() => handleProductClick(product)}
