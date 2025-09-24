@@ -103,18 +103,24 @@ const PRODUCTS: Product[] = [
 
 interface ProductGridProps {
   selectedCategory: string;
+  searchQuery: string;
 }
 
-const ProductGrid = ({ selectedCategory }: ProductGridProps) => {
+const ProductGrid = ({ selectedCategory, searchQuery }: ProductGridProps) => {
   const [products, setProducts] = useState(PRODUCTS);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false);
 
-  // Filter products by category
-  const filteredProducts = selectedCategory === "All" 
-    ? products 
-    : products.filter(product => product.category === selectedCategory);
+  // Filter products by category and search query
+  const filteredProducts = products.filter(product => {
+    const matchesCategory = selectedCategory === "All" || product.category === selectedCategory;
+    const matchesSearch = searchQuery === "" || 
+      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.category.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    return matchesCategory && matchesSearch;
+  });
 
   // Shuffle products every 8 seconds
   useEffect(() => {
@@ -145,7 +151,16 @@ const ProductGrid = ({ selectedCategory }: ProductGridProps) => {
     <>
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-bold text-foreground">Featured Products</h2>
+          <div>
+            <h2 className="text-2xl font-bold text-foreground">Featured Products</h2>
+            {(searchQuery || selectedCategory !== "All") && (
+              <p className="text-muted-foreground mt-1">
+                {filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''} found
+                {searchQuery && ` for "${searchQuery}"`}
+                {selectedCategory !== "All" && ` in ${selectedCategory}`}
+              </p>
+            )}
+          </div>
           {isShuffling && (
             <div className="flex items-center text-muted-foreground text-sm">
               <ShuffleIcon className="w-4 h-4 mr-2 animate-spin" />
@@ -154,10 +169,19 @@ const ProductGrid = ({ selectedCategory }: ProductGridProps) => {
           )}
         </div>
         
-        <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 md:gap-6 transition-all duration-500 ${
-          isShuffling ? 'opacity-70 scale-98' : 'opacity-100 scale-100'
-        }`}>
-          {filteredProducts.map((product) => (
+        
+        {filteredProducts.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground text-lg mb-2">No products found</p>
+            <p className="text-sm text-muted-foreground">
+              Try adjusting your search or category filter
+            </p>
+          </div>
+        ) : (
+          <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 md:gap-6 transition-all duration-500 ${
+            isShuffling ? 'opacity-70 scale-98' : 'opacity-100 scale-100'
+          }`}>
+            {filteredProducts.map((product) => (
             <div
               key={product.id}
               onClick={() => handleProductClick(product)}
@@ -181,9 +205,10 @@ const ProductGrid = ({ selectedCategory }: ProductGridProps) => {
                   Tap for color options
                 </p>
               </div>
-            </div>
-          ))}
-        </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <ProductModal

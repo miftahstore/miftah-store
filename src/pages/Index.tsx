@@ -8,6 +8,11 @@ const CATEGORIES = ["All", "Audio", "Computing", "Mobile", "Wearables"];
 
 const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -16,9 +21,14 @@ const Index = () => {
         categories={CATEGORIES}
         selectedCategory={selectedCategory}
         onCategoryChange={setSelectedCategory}
+        onSearch={handleSearch}
+        searchQuery={searchQuery}
       />
       <main>
-        <ProductGrid selectedCategory={selectedCategory} />
+        <ProductGrid 
+          selectedCategory={selectedCategory} 
+          searchQuery={searchQuery}
+        />
       </main>
       <Footer />
     </div>
