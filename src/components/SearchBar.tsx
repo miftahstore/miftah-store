@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { Search, X } from "lucide-react";
 import { z } from "zod";
 
@@ -17,6 +17,7 @@ interface SearchBarProps {
 const SearchBar = ({ onSearch, searchQuery }: SearchBarProps) => {
   const [localQuery, setLocalQuery] = useState(searchQuery);
   const [error, setError] = useState<string>("");
+  const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
 
   const handleSearch = useCallback((value: string) => {
     try {
@@ -40,13 +41,25 @@ const SearchBar = ({ onSearch, searchQuery }: SearchBarProps) => {
     const value = e.target.value;
     setLocalQuery(value);
     
-    // Debounced search
-    const timeoutId = setTimeout(() => {
+    // Clear existing timeout
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
+    
+    // Set new debounced search
+    debounceTimeout.current = setTimeout(() => {
       handleSearch(value);
     }, 300);
-    
-    return () => clearTimeout(timeoutId);
   };
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimeout.current) {
+        clearTimeout(debounceTimeout.current);
+      }
+    };
+  }, []);
 
   const handleClear = () => {
     setLocalQuery("");
