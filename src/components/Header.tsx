@@ -1,5 +1,5 @@
 import { Phone } from "lucide-react";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/miftah-store-logo.jpg";
 
 const Header = () => {
   return (
@@ -10,7 +10,7 @@ const Header = () => {
           <div className="flex items-center">
             <img
               src={logo}
-              alt="ShopPro"
+              alt="Miftah Store"
               className="h-12 w-auto"
             />
           </div>
